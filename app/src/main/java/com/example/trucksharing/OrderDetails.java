@@ -21,9 +21,6 @@ public class OrderDetails extends AppCompatActivity {
 
     TextView sender,pick,receiver,drop,wieght,type,width,height,length,vechile;
 
-    private static final int CALL_PERMISSION_REQUEST_CODE = 1001;
-    String PhoneNumber="1234567890";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +53,8 @@ public class OrderDetails extends AppCompatActivity {
         String Height=getintent.getStringExtra("heights");
         String Length=getintent.getStringExtra("length");
         String Vechile=getintent.getStringExtra("vechi");
+        String Loc=getintent.getStringExtra("loc");
+        String Dloc=getintent.getStringExtra("Dloc");
 
 
 
@@ -73,37 +72,15 @@ public class OrderDetails extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makePhoneCall(PhoneNumber);
+                Intent intent=new Intent(OrderDetails.this,EsitimateMap.class);
+                intent.putExtra("LOC",Loc);
+                intent.putExtra("DOP",Dloc);
+                startActivity(intent);
             }
         });
 
 
 
-    }
-    private void makePhoneCall(String phoneNumber) {
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + phoneNumber));
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // Request the CALL_PHONE permission if it is not granted
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMISSION_REQUEST_CODE);
-        } else {
-            // Start the call
-            startActivity(callIntent);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CALL_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, start the call
-                makePhoneCall(PhoneNumber);
-            } else {
-                // Permission denied, show a message or handle the situation accordingly
-            }
-        }
     }
 
 }

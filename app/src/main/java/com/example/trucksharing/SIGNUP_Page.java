@@ -89,7 +89,7 @@ public class SIGNUP_Page extends AppCompatActivity {
                     contentValues.put("Password",binding.password2.getText().toString());
                     contentValues.put("ConfirmPassword",binding.confirmPassword.getText().toString());
                     contentValues.put("PhoneNumber",binding.phone.getText().toString());
-                    db.insert("mytable",null,contentValues);
+                    db.insert("mytable1",null,contentValues);
 
                     Intent intent=new Intent(SIGNUP_Page.this,MainActivity.class);
                     startActivity(intent);

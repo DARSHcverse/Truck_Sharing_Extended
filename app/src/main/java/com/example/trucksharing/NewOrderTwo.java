@@ -27,6 +27,7 @@ public class NewOrderTwo extends AppCompatActivity {
         String PD=getInent.getStringExtra("pickDate");
         String T=getInent.getStringExtra("time");
         String LOC=getInent.getStringExtra("loc");
+        String DLOC=getInent.getStringExtra("Dloc");
 
 
         binding= ActivityNewOrderTwoBinding.inflate(getLayoutInflater());
@@ -44,6 +45,7 @@ public class NewOrderTwo extends AppCompatActivity {
                 contentValues.put("PickupDate",PD);
                 contentValues.put("Time",T);
                 contentValues.put("Location",LOC);
+                contentValues.put("DropLoc",DLOC);
 
                 if (binding.furniture.isChecked()) {
                     contentValues.put("GoodType", "Furniture");
@@ -79,7 +81,7 @@ public class NewOrderTwo extends AppCompatActivity {
                     contentValues.put("Vechile", binding.vechileother.getText().toString());
                 }
 
-                db.insert("myorder",null,contentValues);
+                db.insert("myorder2",null,contentValues);
 
                 Intent GoToHome=new Intent(NewOrderTwo.this,Home.class);
                 startActivity(GoToHome);

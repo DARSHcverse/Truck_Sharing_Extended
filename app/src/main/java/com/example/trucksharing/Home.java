@@ -21,10 +21,10 @@ import java.util.List;
 public class Home extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    ArrayList<String> Name,PickUPDate, Pickuptime,Locations,GoodTypes,Weights,Widths,Lengths,Heights,Vechiles;
+    ArrayList<String> Name,PickUPDate, Pickuptime,Locations,DRLoc,GoodTypes,Weights,Widths,Lengths,Heights,Vechiles;
     ArrayList<String> name;
     ArrayList<Integer> Id;
-    MyDatabaseHelper databaseHelper;
+    MyDatabaseHelper mydatabaseHelper;
 
     MyAdapter2 myAdapter2;
 
@@ -39,12 +39,13 @@ public class Home extends AppCompatActivity {
 
 
 
-        databaseHelper=new MyDatabaseHelper(this);
+        mydatabaseHelper=new MyDatabaseHelper(this);
 
         Name=new ArrayList<>();
         PickUPDate=new ArrayList<>();
         Pickuptime =new ArrayList<>();
         Locations=new ArrayList<>();
+        DRLoc=new ArrayList<>();
         GoodTypes=new ArrayList<>();
         Weights=new ArrayList<>();
         Widths=new ArrayList<>();
@@ -52,14 +53,15 @@ public class Home extends AppCompatActivity {
         Heights=new ArrayList<>();
         Vechiles=new ArrayList<>();
 
+
         name=new ArrayList<>();
 
 
         recyclerView=findViewById(R.id.recyclerView);
 
-        ShowData();
 
-        Cursor cursor=databaseHelper.getdata2();
+
+        Cursor cursor=mydatabaseHelper.getdata3();
 
         int vehicleColumnIndex = cursor.getColumnIndex("Vechile");
 
@@ -114,6 +116,8 @@ public class Home extends AppCompatActivity {
                 intent.putExtra("heights",Heights.get(position));
                 intent.putExtra("length",Lengths.get(position));
                 intent.putExtra("vechi",Vechiles.get(position));
+                intent.putExtra("loc",Locations.get(position));
+                intent.putExtra("Dloc",DRLoc.get(position));
                 startActivity(intent);
 
             }
@@ -131,8 +135,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-
-
+        ShowData();
 
     }
 
@@ -164,20 +167,21 @@ public class Home extends AppCompatActivity {
     }
 
     private void ShowData() {
-        Cursor cursor=databaseHelper.getdata2();
+        Cursor cursor=mydatabaseHelper.getdata3();
 
         while(cursor.moveToNext())
         {
             Name.add(cursor.getString(1));
-            PickUPDate.add(cursor.getString(2));
-            Pickuptime.add(cursor.getString(3));
+            Pickuptime.add(cursor.getString(2));
+            PickUPDate.add(cursor.getString(3));
             Locations.add(cursor.getString(4));
-            GoodTypes.add(cursor.getString(5));
-            Weights.add(cursor.getString(6));
-            Widths.add(cursor.getString(7));
-            Lengths.add(cursor.getString(8));
-            Heights.add(cursor.getString(9));
-            Vechiles.add(cursor.getString(10));
+            DRLoc.add(cursor.getString(5));
+            GoodTypes.add(cursor.getString(6));
+            Weights.add(cursor.getString(7));
+            Widths.add(cursor.getString(8));
+            Lengths.add(cursor.getString(9));
+            Heights.add(cursor.getString(10));
+            Vechiles.add(cursor.getString(11));
         }
 
     }
