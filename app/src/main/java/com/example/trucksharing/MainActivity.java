@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     if(checkUserNamePassword==true)
                     {
                         Toast.makeText(MainActivity.this, "Sign in successfull", Toast.LENGTH_SHORT).show();
-                        Intent NextIntent=new Intent(MainActivity.this,NewOrder.class);
+                        Intent NextIntent=new Intent(MainActivity.this,Home.class);
                         startActivity(NextIntent);
                     }
                     else{

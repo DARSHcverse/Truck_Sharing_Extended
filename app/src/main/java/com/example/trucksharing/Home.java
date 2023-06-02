@@ -186,15 +186,6 @@ public class Home extends AppCompatActivity {
 
     }
 
-//    private void ShowData2(){
-//        Cursor cursor=databaseHelper.getdata();
-//
-//        while (cursor.moveToNext())
-//        {
-//            name.add(cursor.getString(1));
-//        }
-//    }
-
 
 
 }

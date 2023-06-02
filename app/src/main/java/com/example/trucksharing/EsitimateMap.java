@@ -1,61 +1,52 @@
 package com.example.trucksharing;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardRequirements;
-import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
-import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.TransactionInfo;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.zip.Inflater;
+import java.util.List;
+import java.util.Random;
 
-public class EsitimateMap extends AppCompatActivity {
+public class EsitimateMap extends AppCompatActivity implements OnMapReadyCallback {
 
     MyDatabaseHelper myDatabaseHelper;
-    TextView Pickuploc, Dropoffloc,AppFare,AppTime;
+    TextView Pickuploc, Dropoffloc;
+    TextView AppFare, AppTime;
     private static final int CALL_PERMISSION_REQUEST_CODE = 1001;
     private static final int REQUEST_CODE_PAYPAL_PAYMENT = 1234;
-    Button BookNow,Call;
+    Button BookNow, Call;
 
-    String PhoneNumber="1234567890";
+    String PhoneNumber = "0377778888";
+
+    SupportMapFragment mapFragment;
+
+    private GoogleMap map;
 
 
     @Override
@@ -63,31 +54,38 @@ public class EsitimateMap extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_esitimate_map);
 
-        myDatabaseHelper=new MyDatabaseHelper(this);
+        myDatabaseHelper = new MyDatabaseHelper(this);
 
-        Intent getintent=getIntent();
-        String location=getintent.getStringExtra("LOC");
-        String DropLoc=getintent.getStringExtra("DOP");
+        Intent getintent = getIntent();
+        String location = getintent.getStringExtra("LOC");
+        String DropLoc = getintent.getStringExtra("DOP");
 
-        System.out.println(location);
 
-        Pickuploc=findViewById(R.id.PickUPLoc);
-        Dropoffloc=findViewById(R.id.DropOFFLoc);
-        AppFare=findViewById(R.id.ApproFare);
-        AppTime=findViewById(R.id.TravelTime);
+        Pickuploc = findViewById(R.id.PickUPLoc);
+        Dropoffloc = findViewById(R.id.DropOFFLoc);
+        AppFare = findViewById(R.id.ApproFare);
+        AppTime = findViewById(R.id.TravelTime);
 
-        Call=findViewById(R.id.CallD);
+        Call = findViewById(R.id.CallD);
 
-        BookNow=findViewById(R.id.Book);
+        BookNow = findViewById(R.id.Book);
 
-        Double fare=50.00;
+        Pickuploc.setText("Pickup Location: " + location);
+        Dropoffloc.setText("Drop-Off Location: " + DropLoc);
 
+        Random random = new Random();
+        int TravelTime = random.nextInt(50 - 15 + 1) + 15;
+
+        int Fare = random.nextInt(80 - 10 + 2) + 15;
+
+        AppFare.setText("Approx. Fare: $" + Fare);
+        AppTime.setText("Approx. Travel Time: " + TravelTime + " min");
 
         BookNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                PayPalPayment payment = new PayPalPayment(new BigDecimal("10.00"), "USD", "Payment description", PayPalPayment.PAYMENT_INTENT_SALE);
+                PayPalPayment payment = new PayPalPayment(new BigDecimal(Fare), "AUD", "Payment for Goods", PayPalPayment.PAYMENT_INTENT_SALE);
 
                 Intent intent = new Intent(EsitimateMap.this, PaymentActivity.class);
                 intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
@@ -103,6 +101,10 @@ public class EsitimateMap extends AppCompatActivity {
 
             }
         });
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
 
     }
@@ -130,6 +132,7 @@ public class EsitimateMap extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -148,6 +151,63 @@ public class EsitimateMap extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        Geocoder geocoder = new Geocoder(this);
+        myDatabaseHelper = new MyDatabaseHelper(this);
+
+        try {
+            Pickuploc = findViewById(R.id.PickUPLoc);
+            Dropoffloc = findViewById(R.id.DropOFFLoc);
+            map = googleMap;
+            map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            map.setTrafficEnabled(true);
+
+            List<Address> addresses = geocoder.getFromLocationName(Pickuploc.getText().toString(), 1);
+            List<Address> addresses2 = geocoder.getFromLocationName(Dropoffloc.getText().toString(), 1);
+
+            Address address = addresses.get(0);
+            Address address2 = addresses2.get(0);
+
+            double latitude = address.getLatitude();
+            double longitude = address.getLongitude();
+
+            double latitude2 = address2.getLatitude();
+            double longitude2 = address2.getLongitude();
+
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+            googleMap.setBuildingsEnabled(true);
+            googleMap.setTrafficEnabled(true);
+
+            PolylineOptions polylineOptions = new PolylineOptions()
+                    .add(new LatLng(latitude, longitude))
+                    .add(new LatLng(latitude2, longitude2))
+                    .width(5)
+                    .color(Color.RED);
+
+            googleMap.addPolyline(polylineOptions);
+
+            LatLng loc = new LatLng(latitude, longitude);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(loc)
+                    .title("Pickup in " +Pickuploc.getText().toString()));
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+            LatLng loc2 = new LatLng(latitude2, longitude2);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(loc2)
+                    .title("Drop in " +Dropoffloc.getText().toString()));
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
 
 
 }

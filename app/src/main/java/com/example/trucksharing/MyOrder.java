@@ -51,7 +51,7 @@ public class MyOrder extends AppCompatActivity {
 
         recyclerView=findViewById(R.id.recyclerView2);
 
-//        ShowData();
+        ShowData();
 
         adapter=new MyAdapter(this,Name, Pickuptime,DropOffTime);
         recyclerView.setAdapter(adapter);
@@ -132,23 +132,23 @@ public class MyOrder extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-//    private void ShowData() {
-//        Cursor cursor=databaseHelper.getdata3();
-//
-//        while(cursor.moveToNext())
-//        {
-//            Name.add(cursor.getString(1));
-//            Pickuptime.add(cursor.getString(2));
-//            DropOffTime.add(cursor.getString(3));
-//            Locations.add(cursor.getString(4));
-//            DRLoc.add(cursor.getString(5));
-//            GoodTypes.add(cursor.getString(6));
-//            Weights.add(cursor.getString(7));
-//            Widths.add(cursor.getString(8));
-//            Lengths.add(cursor.getString(9));
-//            Heights.add(cursor.getString(10));
-//            Vechiles.add(cursor.getString(11));
-//        }
-//
-//    }
+    private void ShowData() {
+        Cursor cursor=databaseHelper.getdata3();
+
+        while(cursor.moveToNext())
+        {
+            Name.add(cursor.getString(1));
+            Pickuptime.add(cursor.getString(2));
+            DropOffTime.add(cursor.getString(3));
+            Locations.add(cursor.getString(4));
+            DRLoc.add(cursor.getString(5));
+            GoodTypes.add(cursor.getString(6));
+            Weights.add(cursor.getString(7));
+            Widths.add(cursor.getString(8));
+            Lengths.add(cursor.getString(9));
+            Heights.add(cursor.getString(10));
+            Vechiles.add(cursor.getString(11));
+        }
+
+    }
 }

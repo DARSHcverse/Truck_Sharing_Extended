@@ -58,9 +58,6 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
 
     @Override
     public int getItemCount() {
-
-        System.out.println(ID);
-
         return ID.size();
     }
 
